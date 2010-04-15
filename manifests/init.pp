@@ -103,6 +103,18 @@ class shibboleth::idp {
     require => Exec["install shibboleth idp"],
   }
 
+  file { "/etc/shibboleth":
+    ensure  => link,
+    target  => "/opt/shibboleth-idp/conf",
+    require => [File["/opt/shibboleth-idp"], Exec["install shibboleth idp"]],
+  }
+
+  file { "/var/log/shibboleth":
+    ensure  => link,
+    target  => "/opt/shibboleth-idp/logs",
+    require => [File["/opt/shibboleth-idp"], Exec["install shibboleth idp"]],
+  }
+
   if ( $shibidp_tomcat ) {
 
     # copy war file from installation dir to tomcat webapp dir.
