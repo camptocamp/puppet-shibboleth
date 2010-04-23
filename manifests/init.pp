@@ -103,6 +103,13 @@ class shibboleth::idp {
     require => Exec["install shibboleth idp"],
   }
 
+  file { "/opt/shibboleth-idp/logs":
+    ensure  => directory,
+    owner   => "tomcat",
+    mode    => "0755",
+    require => [Exec["install shibboleth idp"], File["/opt/shibboleth-idp"]],
+  }
+
   file { "/etc/shibboleth":
     ensure  => link,
     target  => "/opt/shibboleth-idp/conf",
