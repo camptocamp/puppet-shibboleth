@@ -1,3 +1,17 @@
+/*
+
+== Class: shibboleth::sp
+
+Installs shibboleth's service provider, and allow it's apache module get loaded
+with apache::module.
+
+Requires:
+- Class[apache]
+
+Limitations:
+- currently RedHat/CentOS only.
+
+*/
 class shibboleth::sp {
 
   yumrepo { "security_shibboleth":
@@ -86,6 +100,21 @@ class shibboleth::shibd {
 
 == Class shibboleth::idp
 
+Installs shibboleth's identity provider. This involves building the war file and deploying
+it in a tomcat instance, and setting up various files and directories in /opt and /etc.
+Shibboleth itself gets installed in /opt/shibboleth-idp.
+
+Class parameters:
+- *shibidp_ver*: shibboleth version, defaults to 2.1.5
+- *shibidp_home*: where shibboleth should be installed. Default to
+  /opt/shibboleth-idp-${shibidp_ver}
+- *shibidp_hostname*: the DNS name the service will get accessed through.
+  Defaults to localhost.
+- *shibidp_keypass*: the passphrase of the generated certificate.
+- *shibidp_javahome*: the JAVA_HOME path. Defaults to /usr.
+
+Requires:
+- Tomcat
 
 */
 class shibboleth::idp {
