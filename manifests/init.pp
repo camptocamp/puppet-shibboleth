@@ -9,6 +9,15 @@ class shibboleth::sp {
     require  => Exec["download shibboleth repo key"],
   }
 
+  # ensure file is managed in case we want to purge /etc/yum.repos.d/
+  # http://projects.puppetlabs.com/issues/3152
+  file { "/etc/yum.repos.d/security_shibboleth.repo":
+    ensure  => present,
+    mode    => 0644,
+    owner   => "root",
+    require => Yumrepo["security_shibboleth"],
+  }
+
   exec { "download shibboleth repo key":
     command => "curl -s http://download.opensuse.org/repositories/security:/shibboleth/RHEL_5/repodata/repomd.xml.key -o /etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth",
     creates => "/etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth",
