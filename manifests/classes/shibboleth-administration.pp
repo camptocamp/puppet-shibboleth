@@ -7,7 +7,7 @@ to:
 - restart shibd service.
 
 Requires:
-- management of /etc/sudoers with common::concatfilepart
+- definition sudo::directive from module camptocamp/puppet-sudo
 
 Warning: will overwrite /etc/sudoers !
 
