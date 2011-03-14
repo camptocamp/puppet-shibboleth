@@ -18,10 +18,9 @@ class shibboleth::administration {
     ensure => present,
   }
 
-  common::concatfilepart { "sudoers.shibboleth":
+  sudo::directive { "shibboleth-administration":
     ensure  => present,
-    file    => "/etc/sudoers",
-    content => "# this part comes from shibboleth::administration
+    content => "# file managed by puppet (${name})
 User_Alias SHIBBOLETH_ADMIN = %shibboleth-admin
 Cmnd_Alias SHIBBOLETH_ADMIN = /etc/init.d/shibd
 SHIBBOLETH_ADMIN ALL=(root) SHIBBOLETH_ADMIN
