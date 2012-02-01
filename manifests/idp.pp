@@ -46,7 +46,7 @@ class shibboleth::idp {
 
   $shibidp_installdir = "/usr/src/shibboleth-identityprovider-${shibidp_ver}"
 
-  common::archive::zip { "${shibidp_installdir}/.installed":
+  archive::zip { "${shibidp_installdir}/.installed":
     source => $url,
     target => "/usr/src/",
   }
@@ -56,7 +56,7 @@ class shibboleth::idp {
     command => "cd ${shibidp_installdir} && ./install.sh",
     environment => ["JAVA_HOME=${shibidp_javahome}", "ANT_OPTS=-Didp.home.input=${shibidp_home} -Didp.hostname.input=${shibidp_hostname} -Didp.keystore.pass=${shibidp_keypass}"],
     creates => ["${shibidp_home}/war/idp.war"],
-    require => Common::Archive::Zip["${shibidp_installdir}/.installed"],
+    require => Archive::Zip["${shibidp_installdir}/.installed"],
   }
 
   file { "/opt/shibboleth-idp":
@@ -105,7 +105,7 @@ class shibboleth::idp {
       source  => "file:///${shibidp_installdir}/endorsed/",
       recurse => true,
       require => [
-        Common::Archive::Zip["${shibidp_installdir}/.installed"],
+        Archive::Zip["${shibidp_installdir}/.installed"],
         File["/srv/tomcat/shibb-idp/private/"]],
       notify  => Service["tomcat-${shibidp_tomcat}"],
     }
