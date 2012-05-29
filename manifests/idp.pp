@@ -41,7 +41,7 @@ class shibboleth::idp {
     $shibidp_javahome = "/usr"
   }
 
-  $mirror = "http://www.shibboleth.net/downloads/identity-provider"
+  $mirror = "http://shibboleth.net/downloads/identity-provider"
   $url = "${mirror}/${shibidp_ver}/shibboleth-identityprovider-${shibidp_ver}-bin.zip"
 
   $shibidp_installdir = "/usr/src/shibboleth-identityprovider-${shibidp_ver}"
