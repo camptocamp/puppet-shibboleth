@@ -14,9 +14,9 @@ class shibboleth::shibd {
    default => true,
   }
 
-  $shibd_local_config_file = $operatingsystem ? {
-    /RedHat|CentOS/ => '/etc/sysconfig/shibd',
-            default => '',
+  $shibd_local_config_file = $::osfamily ? {
+    'RedHat' => '/etc/sysconfig/shibd',
+    default  => '',
   }
 
   $shibd_user = $shibd_user ? {
@@ -78,7 +78,7 @@ allow httpd_t initrc_t:unix_stream_socket connectto;
 
     file { $shibd_local_config_file:
       ensure  => present,
-      content => template( "shibboleth/etc/config/shibd.$operatingsystem.erb" ),
+      content => template( "shibboleth/etc/config/shibd.${::osfamily}.erb" ),
       owner   => 'root',
       group   => 'root',
       mode    => 644,
