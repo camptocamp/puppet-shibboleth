@@ -10,17 +10,17 @@
 class shibboleth::shibd {
 
   $manage_shibd_user = $shibd_user ? {
-        '' => false,
-   default => true,
+    ''      => false,
+    default => true,
   }
 
-  $shibd_local_config_file = $operatingsystem ? {
-    /RedHat|CentOS/ => '/etc/sysconfig/shibd',
-            default => '',
+  $shibd_local_config_file = $::osfamily ? {
+    'RedHat' => '/etc/sysconfig/shibd',
+    default  => '',
   }
 
   $shibd_user = $shibd_user ? {
-         '' => 'root',
+    ''      => 'root',
     default => $shibd_user,
   }
 
@@ -71,17 +71,17 @@ allow httpd_t initrc_t:unix_stream_socket connectto;
     ensure => 'directory',
     owner  => $shibd_user,
     group  => $shibd_user,
-    mode   => '750',
+    mode   => '0750',
   }
 
   if $manage_shibd_user {
 
     file { $shibd_local_config_file:
       ensure  => present,
-      content => template( "shibboleth/etc/config/shibd.$operatingsystem.erb" ),
+      content => template( "shibboleth/etc/config/shibd.${::osfamily}.erb" ),
       owner   => 'root',
       group   => 'root',
-      mode    => 644,
+      mode    => '0644',
     }
 
   }
