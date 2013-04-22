@@ -5,9 +5,7 @@
 # Shibboleth itself gets installed in /opt/shibboleth-idp.
 #
 # Class parameters:
-# - *shibidp_ver*: shibboleth version, defaults to 2.1.5
-# - *shibidp_home*: where shibboleth should be installed. Default to
-#   /opt/shibboleth-idp-${shibidp_ver}
+# - *shibidp_version*: shibboleth version, defaults to 2.1.5
 # - *shibidp_hostname*: the DNS name the service will get accessed through.
 #   Defaults to localhost.
 # - *shibidp_keypass*: the passphrase of the generated certificate.
@@ -16,32 +14,19 @@
 # Requires:
 # - Tomcat
 #
-class shibboleth::idp {
+class shibboleth::idp(
+  $shibidp_version,
+  $shibidp_hostname = 'localhost',
+  $shibidp_keypass,
+  $shibidp_javahome = '/usr',
+  $shibidp_tomcat = false,
+) {
 
-  if ( ! $shibidp_ver ) {
-    $shibidp_ver = '2.1.5'
-  }
-
-  if ( ! $shibidp_home ) {
-    $shibidp_home = "/opt/shibboleth-idp-${shibidp_ver}"
-  }
-
-  if ( ! $shibidp_hostname ) {
-    $shibidp_hostname = 'localhost'
-  }
-
-  if ( ! $shibidp_keypass ) {
-    fail('missing mandatory attribute: $shibidp_keypass.')
-  }
-
-  if ( ! $shibidp_javahome ) {
-    $shibidp_javahome = '/usr'
-  }
-
+  $shibidp_home = "/opt/shibboleth-idp-${shibidp_version}"
   $mirror = 'http://shibboleth.net/downloads/identity-provider'
-  $url = "${mirror}/${shibidp_ver}/shibboleth-identityprovider-${shibidp_ver}-bin.zip"
+  $url = "${mirror}/${shibidp_version}/shibboleth-identityprovider-${shibidp_version}-bin.zip"
 
-  $shibidp_installdir = "/usr/src/shibboleth-identityprovider-${shibidp_ver}"
+  $shibidp_installdir = "/usr/src/shibboleth-identityprovider-${shibidp_version}"
 
   archive::zip { "${shibidp_installdir}/.installed":
     source => $url,
