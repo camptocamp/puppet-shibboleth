@@ -9,19 +9,8 @@
 #
 class shibboleth::shibd {
 
-  $manage_shibd_user = $shibd_user ? {
-    ''      => false,
-    default => true,
-  }
-
-  $shibd_local_config_file = $::osfamily ? {
-    'RedHat' => '/etc/sysconfig/shibd',
-    default  => '',
-  }
-
-  $shibd_user = $shibd_user ? {
-    ''      => 'root',
-    default => $shibd_user,
+  user { 'shibd':
+    require => Package[ 'shibboleth' ],
   }
 
   service { 'shibd':
@@ -35,8 +24,8 @@ class shibboleth::shibd {
 
     file { '/var/run/shibboleth/':
       ensure  => 'directory',
-      owner   => $shibd_user,
-      group   => $shibd_user,
+      owner   => 'shibd',
+      group   => 'shibd',
       seltype => 'httpd_var_run_t',
       notify  => Service[ 'shibd' ],
       require => Package[ 'shibboleth' ],
@@ -69,21 +58,21 @@ allow httpd_t initrc_t:unix_stream_socket connectto;
 
   file { '/var/log/shibboleth':
     ensure => 'directory',
-    owner  => $shibd_user,
-    group  => $shibd_user,
+    owner  => 'shibd',
+    group  => 'shibd',
     mode   => '0750',
   }
 
-  if $manage_shibd_user {
+  $shibd_local_config_file = $::osfamily ? {
+    'RedHat' => '/etc/sysconfig/shibd',
+    'Debian' => '/etc/default/shibd',
+  }
 
-    file { $shibd_local_config_file:
-      ensure  => present,
-      content => template( "shibboleth/etc/config/shibd.${::osfamily}.erb" ),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-    }
-
+  augeas { 'set shibd user':
+    incl    => $shibd_local_config_file,
+    lens    => 'Shellvars.lns',
+    changes => 'set SHIBD_USER shibd',
+    notify  => Service['shibd'],
   }
 
 }
