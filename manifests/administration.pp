@@ -6,6 +6,8 @@
 #
 # Requires:
 # - definition sudo::directive from module camptocamp/puppet-sudo
+# OR
+# - definition sudo::directive from module saz/puppet-sudo
 #
 # Warning: will overwrite /etc/sudoers !
 #
@@ -15,7 +17,7 @@ class shibboleth::administration {
     ensure => present,
   }
 
-  sudo::directive { 'shibboleth-administration':
+  sudo::conf { 'shibboleth-administration':
     ensure  => present,
     content => "# file managed by puppet (${name})
 User_Alias SHIBBOLETH_ADMIN = %shibboleth-admin
