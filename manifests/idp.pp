@@ -24,11 +24,11 @@ class shibboleth::idp(
 
   $shibidp_home = "/opt/shibboleth-idp-${shibidp_version}"
   $mirror = 'http://shibboleth.net/downloads/identity-provider'
-  $url = "${mirror}/${shibidp_version}/shibboleth-identityprovider-${shibidp_version}-bin.zip"
+  $url = "${mirror}/${shibidp_version}/shibboleth-identityprovider-${shibidp_version}-bin.tar.gz"
 
   $shibidp_installdir = "/usr/src/shibboleth-identityprovider-${shibidp_version}"
 
-  archive::zip { "${shibidp_installdir}/.installed":
+  archive::tar_gz { "${shibidp_installdir}/.installed":
     source => $url,
     target => '/usr/src/',
   }
@@ -41,7 +41,7 @@ class shibboleth::idp(
       "ANT_OPTS=-Didp.home.input=${shibidp_home} -Didp.hostname.input=${shibidp_hostname} -Didp.keystore.pass=${shibidp_keypass}",
     ],
     creates     => ["${shibidp_home}/war/idp.war"],
-    require     => Archive::Zip["${shibidp_installdir}/.installed"],
+    require     => Archive::Tar_gz["${shibidp_installdir}/.installed"],
   }
 
   file { '/opt/shibboleth-idp':
@@ -92,7 +92,7 @@ class shibboleth::idp(
       source  => "file:///${shibidp_installdir}/endorsed/",
       recurse => true,
       require => [
-        Archive::Zip["${shibidp_installdir}/.installed"],
+        Archive::Tar_gz["${shibidp_installdir}/.installed"],
         File['/srv/tomcat/shibb-idp/private/'],
       ],
       notify  => Service["tomcat-${shibidp_tomcat}"],
