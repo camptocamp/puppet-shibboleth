@@ -35,7 +35,7 @@ class shibboleth::idp(
 
   # see http://ant.apache.org/faq.html#passing-cli-args
   exec { 'install shibboleth idp':
-    command     => "cd ${shibidp_installdir} && ./install.sh",
+    command     => "${shibidp_installdir}/install.sh",
     environment => [
       "JAVA_HOME=${shibidp_javahome}",
       "ANT_OPTS=-Didp.home.input=${shibidp_home} -Didp.hostname.input=${shibidp_hostname} -Didp.keystore.pass=${shibidp_keypass}",
