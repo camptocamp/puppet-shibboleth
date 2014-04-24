@@ -32,7 +32,6 @@ class shibboleth::shibd {
     }
 
     selinux::module { 'shibd':
-      notify  => Selmodule[ 'shibd' ],
       content => "# file managed by puppet
 
 module shibd 1.0;
@@ -47,11 +46,6 @@ require {
 allow httpd_t initrc_t:unix_stream_socket connectto;
 ",
 
-    }
-
-    selmodule { 'shibd':
-      ensure      => present,
-      syncversion => true,
     }
 
   }
