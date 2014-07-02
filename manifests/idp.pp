@@ -16,8 +16,8 @@
 #
 class shibboleth::idp(
   $shibidp_version,
-  $shibidp_hostname = 'localhost',
   $shibidp_keypass,
+  $shibidp_hostname = 'localhost',
   $shibidp_javahome = '/usr',
   $shibidp_tomcat = false,
 ) {

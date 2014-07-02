@@ -20,7 +20,7 @@ class shibboleth::shibd {
   }
 
   # apache must be able to connect to shibd's socket.
-  if $selinux {
+  if $::selinux {
 
     file { '/var/run/shibboleth/':
       ensure  => 'directory',
