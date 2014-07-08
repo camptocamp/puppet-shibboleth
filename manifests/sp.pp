@@ -53,7 +53,7 @@ class shibboleth::sp {
   file { '/etc/httpd/conf.d/shib.conf':
     ensure  => absent,
     require => Package['shibboleth'],
-    notify  => Service['apache'],
+    notify  => Service['httpd'],
   }
 
 # TODO
