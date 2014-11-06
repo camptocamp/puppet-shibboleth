@@ -89,15 +89,24 @@ class shibboleth::idp(
     # Copy library shipped with source to tomcat dir.
     # Don't forget to point the common.loader variable to this directory in
     # your catalina.properties file !
-    file { "/srv/tomcat/${shibidp_tomcat}/private/endorsed/":
-      ensure  => directory,
-      source  => "file:///${shibidp_installdir}/endorsed/",
-      recurse => true,
-      require => [
-        Archive::Tar_gz["${shibidp_installdir}/.installed"],
-        File['/srv/tomcat/shibb-idp/private/'],
-      ],
-      notify  => Service["tomcat-${shibidp_tomcat}"],
+    # As of 2.4.3, this directory doesn't exits anymore.
+    case $shibidp_version {
+
+      default: { }
+
+      /^(2\.([0-3]\.\d)|2\.4\.[0-2])$/: {
+        file { "/srv/tomcat/${shibidp_tomcat}/private/endorsed/":
+          ensure  => directory,
+          source  => "file:///${shibidp_installdir}/endorsed/",
+          recurse => true,
+          require => [
+            Archive::Tar_gz["${shibidp_installdir}/.installed"],
+            File['/srv/tomcat/shibb-idp/private/'],
+          ],
+          notify  => Service["tomcat-${shibidp_tomcat}"],
+        }
+      }
+
     }
 
   }
