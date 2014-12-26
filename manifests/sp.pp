@@ -42,8 +42,8 @@ class shibboleth::sp {
   }
 
   $shibpath = $::architecture ? {
-    x86_64 => '/usr/lib64/shibboleth/mod_shib_22.so',
-    i386   => '/usr/lib/shibboleth/mod_shib_22.so',
+    'x86_64' => '/usr/lib64/shibboleth/mod_shib_22.so',
+    'i386'   => '/usr/lib/shibboleth/mod_shib_22.so',
   }
 
   file { '/etc/httpd/mods-available/shib.load':
