@@ -35,7 +35,7 @@ class shibboleth::idp(
 
   # see http://ant.apache.org/faq.html#passing-cli-args
   exec { 'install shibboleth idp':
-    cwd         => "${shibidp_installdir}",
+    cwd         => $shibidp_installdir,
     command     => "${shibidp_installdir}/install.sh",
     provider    => shell,
     environment => [
