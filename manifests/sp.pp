@@ -11,8 +11,8 @@
 class shibboleth::sp {
 
   yumrepo { 'security_shibboleth':
-    descr    => "Shibboleth-RHEL_${::lsbmajdistrelease}",
-    baseurl  => "http://download.opensuse.org/repositories/security://shibboleth/RHEL_${::lsbmajdistrelease}",
+    descr    => "Shibboleth-RHEL_${::operatingsystemmajrelease}",
+    baseurl  => "http://download.opensuse.org/repositories/security://shibboleth/RHEL_${::operatingsystemmajrelease}",
     gpgkey   => 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
     enabled  => 1,
     gpgcheck => 1,
