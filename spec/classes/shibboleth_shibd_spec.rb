@@ -1,27 +1,40 @@
 require 'spec_helper'
+
 describe 'shibboleth::shibd' do
-  let (:pre_condition) {
-    'Exec { path => "/foo" }'
+  let(:pre_condition) {
+    "
+    package { 'shibboleth': }
+    package { 'checkpolicy': }
+    package { 'policycoreutils': }
+    package { 'selinux-policy-devel': }
+    "
   }
 
-  context 'when using selinux' do
-    let (:facts) { {
-      :osfamily          => 'RedHat',
-      :lsbmajdistrelease => '6',
-      :selinux           => true,
-    } }
+  on_supported_os.each do |os, facts|
+    context "on #{os}" do
+      let(:facts) do
+        facts
+      end
 
-    it { should compile.with_all_deps }
-  end
+      context 'when using selinux' do
+        let (:facts) do
+          facts.merge({
+            :selinux => true,
+          })
+        end
 
-  context 'when not using selinux' do
-    let (:facts) { {
-      :osfamily          => 'RedHat',
-      :lsbmajdistrelease => '6',
-      :selinux           => false,
-    } }
+        it { should compile.with_all_deps }
+      end
 
-    it { should compile.with_all_deps }
+      context 'when not using selinux' do
+        let (:facts) do
+          facts.merge({
+            :selinux => false,
+          })
+        end
+
+        it { should compile.with_all_deps }
+      end
+    end
   end
 end
-
