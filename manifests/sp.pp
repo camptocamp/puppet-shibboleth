@@ -22,7 +22,7 @@ class shibboleth::sp {
   # ensure file is managed in case we want to purge /etc/yum.repos.d/
   # http://projects.puppetlabs.com/issues/3152
   file { '/etc/yum.repos.d/security_shibboleth.repo':
-    ensure  => present,
+    ensure  => file,
     mode    => '0644',
     owner   => 'root',
     require => Yumrepo['security_shibboleth'],
@@ -47,7 +47,7 @@ class shibboleth::sp {
   }
 
   file { '/etc/httpd/mods-available/shib.load':
-    ensure  => present,
+    ensure  => file,
     content => "# file managed by puppet\nLoadModule mod_shib ${shibpath}\n",
   }
 
