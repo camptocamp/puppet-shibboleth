@@ -5,7 +5,7 @@
 # Shibboleth itself gets installed in /opt/shibboleth-idp.
 #
 # Class parameters:
-# - *shibidp_version*: shibboleth version, defaults to 2.1.5
+# - *shibidp_version*: shibboleth version,
 # - *shibidp_hostname*: the DNS name the service will get accessed through.
 #   Defaults to localhost.
 # - *shibidp_keypass*: the passphrase of the generated certificate.
