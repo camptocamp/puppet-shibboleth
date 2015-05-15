@@ -80,6 +80,9 @@ class shibboleth::idp(
     file { "/srv/tomcat/${shibidp_tomcat}/webapps/idp.war":
       source  => "file:///${shibidp_home}/war/idp.war",
       notify  => Service["tomcat-${shibidp_tomcat}"],
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
       require => [
         File["/srv/tomcat/${shibidp_tomcat}/webapps/"],
         Exec['install shibboleth idp'],
@@ -99,6 +102,9 @@ class shibboleth::idp(
           ensure  => directory,
           source  => "file:///${shibidp_installdir}/endorsed/",
           recurse => true,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
           require => [
             Archive::Tar_gz["${shibidp_installdir}/.installed"],
             File['/srv/tomcat/shibb-idp/private/'],
