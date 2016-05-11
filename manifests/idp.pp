@@ -21,12 +21,23 @@ class shibboleth::idp(
   $shibidp_javahome = '/usr',
   $shibidp_tomcat = false,
 ) {
+  validate_re($shibidp_version, ['^2','^3'], 'shibboleth::idp only supports versions 2.x and 3.x')
 
   $shibidp_home = "/opt/shibboleth-idp-${shibidp_version}"
   $mirror = 'http://shibboleth.net/downloads/identity-provider'
-  $url = "${mirror}/${shibidp_version}/shibboleth-identityprovider-${shibidp_version}-bin.tar.gz"
 
-  $shibidp_installdir = "/usr/src/shibboleth-identityprovider-${shibidp_version}"
+  $url = $shibidp_version ? {
+    /^2/ => "${mirror}/${shibidp_version}/shibboleth-identityprovider-${shibidp_version}-bin.tar.gz",
+    /^3/ => "${mirror}/${shibidp_version}/shibboleth-identity-provider-${shibidp_version}.tar.gz",
+  }
+  $shibidp_installdir = $shibidp_version ? {
+    /^2/ => "/usr/src/shibboleth-identityprovider-${shibidp_version}",
+    /^3/ => "/usr/src/shibboleth-identity-provider-${shibidp_version}",
+  }
+  $shibidp_install_sh = $shibidp_version ? {
+    /^2/ => "${shibidp_installdir}/install.sh",
+    /^3/ => "${shibidp_installdir}/bin/install.sh",
+  }
 
   archive::tar_gz { "${shibidp_installdir}/.installed":
     source => $url,
@@ -36,7 +47,7 @@ class shibboleth::idp(
   # see http://ant.apache.org/faq.html#passing-cli-args
   exec { 'install shibboleth idp':
     cwd         => $shibidp_installdir,
-    command     => "${shibidp_installdir}/install.sh",
+    command     => $shibidp_install_sh,
     provider    => shell,
     environment => [
       "JAVA_HOME=${shibidp_javahome}",
