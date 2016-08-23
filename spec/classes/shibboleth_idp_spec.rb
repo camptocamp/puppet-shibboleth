@@ -13,7 +13,7 @@ describe 'shibboleth::idp' do
 
       context 'when passing no parameters' do
         it 'should fail' do
-          expect { should compile }.to raise_error(/shibidp_keypass/)
+          expect { should compile }.to raise_error(/shibidp_/)
         end
       end
 
