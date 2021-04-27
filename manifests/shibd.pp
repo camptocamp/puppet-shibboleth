@@ -7,12 +7,26 @@
 # - Class[shibboleth::sp]
 # - selinux module
 #
-class shibboleth::shibd {
+class shibboleth::shibd(
+  # shib.logger file content, if undef file is not managed.
+  $shibd_logger = undef,
+) {
 
   user { 'shibd':
     require => Package[ 'shibboleth' ],
   }
 
+  if ( $shibd_logger ) {
+    file { '/etc/shibboleth/shibd.logger':
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => $shibd_logger,
+      before  => Service['shibd'],
+      notify  => Service['shibd'],
+      require => Package['shibboleth'],
+    }
+  }
   service { 'shibd':
     ensure  => running,
     enable  => true,

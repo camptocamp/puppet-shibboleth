@@ -8,45 +8,51 @@
 #
 # Limitations:
 # - currently RedHat/CentOS only.
-class shibboleth::sp {
+class shibboleth::sp(
+  $manage_repo    = true,
+  $shib_mod_vers  = '22',
+  $httpd_mod_file = '/etc/httpd/mods-available/shib.load',
+) {
 
-  yumrepo { 'security_shibboleth':
-    descr    => "Shibboleth-RHEL_${::operatingsystemmajrelease}",
-    baseurl  => "http://download.opensuse.org/repositories/security://shibboleth/RHEL_${::operatingsystemmajrelease}",
-    gpgkey   => 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
-    enabled  => 1,
-    gpgcheck => 1,
-    require  => Exec['download shibboleth repo key'],
-  }
+  if ( $manage_repo ) {
+    yumrepo { 'security_shibboleth':
+      descr    => "Shibboleth-RHEL_${::operatingsystemmajrelease}",
+      baseurl  => "http://download.opensuse.org/repositories/security://shibboleth/RHEL_${::operatingsystemmajrelease}",
+      gpgkey   => 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
+      enabled  => 1,
+      before   => Package['shibboleth'],
+      gpgcheck => 1,
+      require  => Exec['download shibboleth repo key'],
+    }
 
-  # ensure file is managed in case we want to purge /etc/yum.repos.d/
-  # http://projects.puppetlabs.com/issues/3152
-  file { '/etc/yum.repos.d/security_shibboleth.repo':
-    ensure  => file,
-    mode    => '0644',
-    owner   => 'root',
-    require => Yumrepo['security_shibboleth'],
-  }
+    # ensure file is managed in case we want to purge /etc/yum.repos.d/
+    # http://projects.puppetlabs.com/issues/3152
+    file { '/etc/yum.repos.d/security_shibboleth.repo':
+      ensure  => file,
+      mode    => '0644',
+      owner   => 'root',
+      require => Yumrepo['security_shibboleth'],
+    }
 
-  exec { 'download shibboleth repo key':
-    command => 'curl -s http://download.opensuse.org/repositories/security:/shibboleth/RHEL_5/repodata/repomd.xml.key -o /etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
-    creates => '/etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
-    require => File['/etc/pki/rpm-gpg/'],
-    path    => $::path,
+    exec { 'download shibboleth repo key':
+      command => 'curl -s http://download.opensuse.org/repositories/security:/shibboleth/RHEL_5/repodata/repomd.xml.key -o /etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
+      creates => '/etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
+      require => File['/etc/pki/rpm-gpg/'],
+      path    => $::path,
+    }
   }
 
   package { 'shibboleth':
-    ensure  => present,
-    name    => "shibboleth.${::architecture}",
-    require => Yumrepo['security_shibboleth'],
+    ensure => present,
+    name   => "shibboleth.${::architecture}",
   }
 
   $shibpath = $::architecture ? {
-    'x86_64' => '/usr/lib64/shibboleth/mod_shib_22.so',
-    'i386'   => '/usr/lib/shibboleth/mod_shib_22.so',
+    'x86_64' => "/usr/lib64/shibboleth/mod_shib_${shib_mod_vers}.so",
+    'i386'   => "/usr/lib/shibboleth/mod_shib_${shib_mod_vers}.so",
   }
 
-  file { '/etc/httpd/mods-available/shib.load':
+  file { $httpd_mod_file:
     ensure  => file,
     content => "# file managed by puppet\nLoadModule mod_shib ${shibpath}\n",
   }
