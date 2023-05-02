@@ -16,13 +16,13 @@ class shibboleth::sp(
 
   if ( $manage_repo ) {
     yumrepo { 'security_shibboleth':
-      descr    => "Shibboleth-RHEL_${::operatingsystemmajrelease}",
-      baseurl  => "http://download.opensuse.org/repositories/security://shibboleth/RHEL_${::operatingsystemmajrelease}",
-      gpgkey   => 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
-      enabled  => 1,
-      before   => Package['shibboleth'],
-      gpgcheck => 1,
-      require  => Exec['download shibboleth repo key'],
+      descr      => "Shibboleth-RHEL_${::operatingsystemmajrelease}",
+      mirrorlist => "https://shibboleth.net/cgi-bin/mirrorlist.cgi/CentOS_CentOS-${::operatingsystemmajrelease}",
+      gpgkey     => 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
+      enabled    => 1,
+      before     => Package['shibboleth'],
+      gpgcheck   => 1,
+      require    => Exec['download shibboleth repo key'],
     }
 
     # ensure file is managed in case we want to purge /etc/yum.repos.d/
