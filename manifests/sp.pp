@@ -15,14 +15,14 @@ class shibboleth::sp(
 ) {
 
   if ( $manage_repo ) {
+    # The content is taken directly from https://shibboleth.net/downloads/service-provider/RPMS/
     yumrepo { 'security_shibboleth':
-      descr    => "Shibboleth-RHEL_${::operatingsystemmajrelease}",
-      baseurl  => "http://download.opensuse.org/repositories/security://shibboleth/RHEL_${::operatingsystemmajrelease}",
-      gpgkey   => 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
-      enabled  => 1,
-      before   => Package['shibboleth'],
-      gpgcheck => 1,
-      require  => Exec['download shibboleth repo key'],
+      descr      => "Shibboleth-RHEL_${::operatingsystemmajrelease}",
+      mirrorlist => "https://shibboleth.net/cgi-bin/mirrorlist.cgi/RHEL_${::operatingsystemmajrelease}",
+      gpgkey     => "https://shibboleth.net/downloads/service-provider/RPMS/repomd.xml.key\n        https://shibboleth.net/downloads/service-provider/RPMS/cantor.repomd.xml.key",
+      enabled    => 1,
+      before     => Package['shibboleth'],
+      gpgcheck   => 1,
     }
 
     # ensure file is managed in case we want to purge /etc/yum.repos.d/
@@ -32,13 +32,6 @@ class shibboleth::sp(
       mode    => '0644',
       owner   => 'root',
       require => Yumrepo['security_shibboleth'],
-    }
-
-    exec { 'download shibboleth repo key':
-      command => 'curl -s http://download.opensuse.org/repositories/security:/shibboleth/RHEL_5/repodata/repomd.xml.key -o /etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
-      creates => '/etc/pki/rpm-gpg/RPM-GPG-KEY-shibboleth',
-      require => File['/etc/pki/rpm-gpg/'],
-      path    => $::path,
     }
   }
 
